@@ -24,6 +24,7 @@ package lavalink.server.io
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
 import dev.arbjerg.lavalink.api.AudioPluginInfoModifier
+import dev.arbjerg.lavalink.api.IPlayer
 import dev.arbjerg.lavalink.api.ISocketContext
 import dev.arbjerg.lavalink.api.PluginEventHandler
 import dev.arbjerg.lavalink.protocol.v4.Message
@@ -115,7 +116,7 @@ class SocketContext(
     /**
      * Gets or creates a media connection
      */
-    fun getMediaConnection(player: LavalinkPlayer): MediaConnection {
+    override fun getMediaConnection(player: IPlayer): MediaConnection {
         val guildId = player.guildId
         var conn = koe.getConnection(guildId)
         if (conn == null) {
@@ -216,7 +217,7 @@ class SocketContext(
         session.close()
     }
 
-    private inner class WsEventHandler(private val player: LavalinkPlayer) : KoeEventAdapter() {
+    private inner class WsEventHandler(private val player: IPlayer) : KoeEventAdapter() {
         override fun gatewayClosed(code: Int, reason: String?, byRemote: Boolean) {
             val event = Message.EmittedEvent.WebSocketClosedEvent(
                 player.guildId.toString(),

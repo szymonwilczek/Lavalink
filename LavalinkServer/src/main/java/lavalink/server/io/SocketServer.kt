@@ -24,6 +24,8 @@ package lavalink.server.io
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
 import dev.arbjerg.lavalink.api.AudioPluginInfoModifier
+import dev.arbjerg.lavalink.api.IPlayer
+import dev.arbjerg.lavalink.api.ISocketServer
 import dev.arbjerg.lavalink.api.PluginEventHandler
 import dev.arbjerg.lavalink.protocol.v4.Message
 import dev.arbjerg.lavalink.protocol.v4.PlayerState
@@ -46,19 +48,19 @@ final class SocketServer(
     koeOptions: KoeOptions,
     private val eventHandlers: List<PluginEventHandler>,
     private val pluginInfoModifiers: List<AudioPluginInfoModifier>
-) : TextWebSocketHandler() {
+) : TextWebSocketHandler(), ISocketServer {
 
     // sessionID <-> Session
-    val contextMap = ConcurrentHashMap<String, SocketContext>()
-    private val resumableSessions = mutableMapOf<String, SocketContext>()
-    private val koe = Koe.koe(koeOptions)
+    override val contextMap = ConcurrentHashMap<String, SocketContext>()
+    override val resumableSessions = mutableMapOf<String, SocketContext>()
+    override val koe = Koe.koe(koeOptions)
     private val statsCollector = StatsCollector(this)
     private val charPool = ('a'..'z') + ('0'..'9')
 
     companion object {
         private val log = LoggerFactory.getLogger(SocketServer::class.java)
 
-        fun sendPlayerUpdate(socketContext: SocketContext, player: LavalinkPlayer) {
+        fun sendPlayerUpdate(socketContext: SocketContext, player: IPlayer) {
             if (socketContext.sessionPaused) return
 
             val connection = socketContext.getMediaConnection(player).gatewayConnection

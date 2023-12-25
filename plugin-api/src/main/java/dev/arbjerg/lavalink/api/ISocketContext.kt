@@ -2,6 +2,7 @@ package dev.arbjerg.lavalink.api
 
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.json.JsonElement
+import moe.kyokobot.koe.MediaConnection
 
 /**
  * Represents a WebSocket connection
@@ -34,6 +35,11 @@ interface ISocketContext {
      * @return a potentially newly-created player
      */
     fun getPlayer(guildId: Long): IPlayer
+
+    /**
+     * Gets or creates a media connection
+     */
+    fun getMediaConnection(player: IPlayer): MediaConnection
 
     /**
      * Destroys the player for the Guild corresponding to [guildId].
